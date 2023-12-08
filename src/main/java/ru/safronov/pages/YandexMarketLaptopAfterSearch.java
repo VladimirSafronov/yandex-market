@@ -2,47 +2,78 @@ package ru.safronov.pages;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class YandexMarketLaptopAfterSearch {
 
   private final WebDriver driver;
-//  private final Wait<WebDriver> wait;
-    private final WebDriverWait wait;
+  public final Wait<WebDriver> wait;
   private List<WebElement> laptops;
   private WebElement showMoreButton;
 
   public YandexMarketLaptopAfterSearch(WebDriver driver) {
     this.driver = driver;
-    this.wait = new WebDriverWait(driver, 10);
-//    wait.until(elementToBeClickable(By.xpath("//span[text()=\"Показать ещё\"]")));
-//    this.showMore = driver.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
 
-//    this.wait = new FluentWait<>(driver)
-//        .withTimeout(Duration.ofSeconds(10L))
-//        .pollingEvery(Duration.ofMillis(500L))
-//        .ignoring(NoSuchElementException.class, TimeoutException.class);
+    List<Class<? extends WebDriverException>> excs = List.of(
+        NoSuchElementException.class, StaleElementReferenceException.class, TimeoutException.class
+    );
+    this.wait = new FluentWait<>(driver)
+        .withTimeout(Duration.ofSeconds(5L))
+        .pollingEvery(Duration.ofMillis(500L))
+        .ignoreAll(excs);
 
-//    this.showMore = wait.until(driver1 -> driver1.findElement(By.xpath("//span[text()=\"Показать ещё\"]")));
     this.laptops = new ArrayList<>();
   }
 
   public void loadAndInitShowMoreButton() {
-    wait.until(elementToBeClickable((By.xpath("//span[text()=\"Показать ещё\"]"))));
-    this.showMoreButton = driver.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
+    wait.until(
+        d -> {
+          d.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
+          return true;
+        });
+    try {
+      wait.until(elementToBeClickable(By.xpath("//span[text()=\"Показать ещё\"]")));
+      this.showMoreButton = driver.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
+    } catch (TimeoutException e) {
+      System.out.println("Обработали TimeoutException");
+    }
+  }
 
+  public void loadLaptops() {
+    wait.until(
+        d -> {
+          d.findElement(By.xpath("//div[@data-auto='pagination-page']/div[text()='1']"));
+          return true;
+        });
+    WebElement bottomOfPage = driver.findElement(By.xpath(
+        "//div[@data-auto='pagination-page']/div[text()='1']"));
     new Actions(driver)
-        .moveToElement(showMoreButton, 0, 0)
+        .moveToElement(bottomOfPage, 0, 0)
         .perform();
 
+    laptops.clear();
     laptops.addAll(driver.findElements(By.xpath("//div[@data-known-size='249']")));
-    System.out.println("After loadAndInitShowMoreButton " + laptops.size());
+    System.out.println("laptops size = " + laptops.size());
+  }
+
+  public void loadPage() {
+    new WebDriverWait(driver, 10).until(
+        webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState")
+            .equals("complete"));
   }
 
   public List<WebElement> getLaptops() {
@@ -50,10 +81,11 @@ public class YandexMarketLaptopAfterSearch {
   }
 
   public WebElement getShowMoreButton() {
+    wait.until(
+        d -> {
+          d.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
+          return true;
+        });
     return showMoreButton;
-  }
-
-  public void setShowMoreButton(WebElement showMoreButton) {
-    this.showMoreButton = showMoreButton;
   }
 }
