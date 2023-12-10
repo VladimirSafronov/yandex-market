@@ -76,9 +76,9 @@ public class YandexMarketLaptopAfterSearchSteps {
       if (productPrice < Integer.parseInt(filterPriceFrom)
           || productPrice > Integer.parseInt(filterPriceTo)
           || !Arrays.asList(companies).contains(productCompany)) {
-//        System.out.println(productInfo);
-//        System.out.println(productCompany);
-//        System.out.println(productPrice);
+        System.out.println(productInfo);
+        System.out.println(productCompany);
+        System.out.println(productPrice);
         System.out.println(count);
         return false;
       }

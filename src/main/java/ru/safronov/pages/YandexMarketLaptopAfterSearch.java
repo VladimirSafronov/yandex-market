@@ -19,6 +19,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
 
+  private static final String LAPTOP_XPATH = "//div[@data-known-size='249']";
+  private static final String SHOW_MORE_BUTTON_XPATH = "//span[text()=\"Показать ещё\"]";
+  private static final String SEARCH_PAGER_XPATH = "//div[@data-zone-name='SearchPager']";
   public final Wait<WebDriver> wait;
   private List<WebElement> laptops;
   private WebElement showMoreButton;
@@ -37,13 +40,13 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
 
     this.laptops = new ArrayList<>();
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-        "//div[@data-zone-name='SearchPager']")));
-    this.searchPager = driver.findElement(By.xpath("//div[@data-zone-name='SearchPager']"));
+        SEARCH_PAGER_XPATH)));
+    this.searchPager = driver.findElement(By.xpath(SEARCH_PAGER_XPATH));
   }
 
   public void initShowMoreButton() {
     if (isShowMoreButtonExists()) {
-      this.showMoreButton = driver.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
+      this.showMoreButton = driver.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
     }
   }
 
@@ -56,17 +59,18 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
         .perform();
 
     laptops.clear();
-    laptops.addAll(driver.findElements(By.xpath("//div[@data-known-size='249']")));
+    laptops.addAll(driver.findElements(By.xpath(LAPTOP_XPATH)));
     System.out.println("laptops size = " + laptops.size());
   }
 
   public boolean isShowMoreButtonExists() {
+    //TODO: придумать как избавиться от Thread.sleep()
     try {
       Thread.sleep(2000);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    return driver.findElements(By.xpath("//span[text()=\"Показать ещё\"]")).size() > 0;
+    return driver.findElements(By.xpath(SHOW_MORE_BUTTON_XPATH)).size() > 0;
   }
 
   public void loadPage() {
@@ -80,11 +84,6 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
   }
 
   public WebElement getShowMoreButton() {
-//    wait.until(
-//        d -> {
-//          d.findElement(By.xpath("//span[text()=\"Показать ещё\"]"));
-//          return true;
-//        });
     return showMoreButton;
   }
 }
