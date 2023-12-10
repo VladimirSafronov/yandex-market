@@ -5,45 +5,36 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClick
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class YandexMarketLaptops {
+public class YandexMarketLaptops extends YandexMarketMain {
 
-  private final WebDriver driver;
-  private final WebDriverWait wait;
+  private static final String FIELD_FROM_PRICE_XPATH =
+      "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'min')]";
+  private static final String FIELD_TO_PRICE_XPATH =
+      "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'max')]";
+
   private WebElement fieldFromPrice;
   private WebElement fieldToPrice;
   private WebElement[] products;
 
   public YandexMarketLaptops(WebDriver driver) {
-    this.driver = driver;
-    this.wait = new WebDriverWait(driver, 10);
+    super(driver);
 
-    wait.until(elementToBeClickable(By.xpath(
-        "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'min')]")));
-    this.fieldFromPrice = driver.findElement(By.xpath(
-        "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'min')]"));
+    wait.until(elementToBeClickable(By.xpath(FIELD_FROM_PRICE_XPATH)));
+    this.fieldFromPrice = driver.findElement(By.xpath(FIELD_FROM_PRICE_XPATH));
 
-    wait.until(elementToBeClickable(By.xpath(
-        "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'max')]")));
-    this.fieldToPrice = driver.findElement(By.xpath(
-        "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'max')]"));
+    wait.until(elementToBeClickable(By.xpath(FIELD_TO_PRICE_XPATH)));
+    this.fieldToPrice = driver.findElement(By.xpath(FIELD_TO_PRICE_XPATH));
   }
 
   public YandexMarketLaptops(WebDriver driver, String... chooseProducts) {
-    this.driver = driver;
-    this.wait = new WebDriverWait(driver, 10);
+    super(driver);
 
     this.products = new WebElement[chooseProducts.length];
     for (int i = 0; i < products.length; i++) {
       wait.until(elementToBeClickable(By.xpath("//span[text()=\"" + chooseProducts[i] + "\"]")));
       products[i] = driver.findElement(By.xpath("//span[text()=\"" + chooseProducts[i] + "\"]"));
     }
-//    wait.until(elementToBeClickable(By.xpath("//span[text()=\"Lenovo\"]")));
-//    this.checkBoxLenovo = driver.findElement(By.xpath("//span[text()=\"Lenovo\"]"));
-//
-//    wait.until(elementToBeClickable(By.xpath("//span[text()=\"HP\"]")));
-//    this.checkBoxHP = driver.findElement(By.xpath("//span[text()=\"HP\"]"));
   }
 
   public WebElement getFieldFromPrice() {

@@ -9,8 +9,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class YandexMarketMain {
 
+  private static final String CATALOG_BUTTON_XPATH = "//div[@data-zone-name='catalog']";
+  private static final String SEARCH_FIELD_XPATH = "//input[@type='text' and @placeholder='Искать товары']";
+  private static final String SUBMIT_BUTTON_XPATH = "//button[@type='submit']";
+
   protected WebDriver driver;
-  private WebDriverWait wait;
+  protected WebDriverWait wait;
   protected final WebElement buttonCatalog;
   protected final WebElement searchField;
   protected final WebElement buttonSubmit;
@@ -18,17 +22,14 @@ public class YandexMarketMain {
   public YandexMarketMain(WebDriver driver) {
     this.driver = driver;
     this.wait = new WebDriverWait(driver, 10);
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-        "//div[@data-zone-name='catalog']")));
-    this.buttonCatalog = driver.findElement(By.xpath("//div[@data-zone-name='catalog']"));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(CATALOG_BUTTON_XPATH)));
+    this.buttonCatalog = driver.findElement(By.xpath(CATALOG_BUTTON_XPATH));
 
-    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-        "//input[@type='text' and @placeholder='Искать товары']")));
-    this.searchField = driver.findElement(By.xpath(
-        "//input[@type='text' and @placeholder='Искать товары']"));
+    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(SEARCH_FIELD_XPATH)));
+    this.searchField = driver.findElement(By.xpath(SEARCH_FIELD_XPATH));
 
-    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']")));
-    this.buttonSubmit = driver.findElement(By.xpath("//button[@type='submit']"));
+    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(SUBMIT_BUTTON_XPATH)));
+    this.buttonSubmit = driver.findElement(By.xpath(SUBMIT_BUTTON_XPATH));
   }
 
   public WebElement getButtonCatalog() {
