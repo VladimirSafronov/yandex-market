@@ -25,7 +25,7 @@ public class YandexMarketTest extends BaseTest {
     chooseProduct(hpCompany, lenovoCompany);
     waitPageLoad(chromeDriver);
     checkProductCount(productsCount);
-    checkProductList();
+    checkProductList(filterPriceFrom, filterPriceTo, hpCompany, lenovoCompany);
     System.out.println();
   }
 }
