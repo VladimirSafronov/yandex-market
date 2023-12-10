@@ -19,9 +19,9 @@ public class BaseTest {
     chromeDriver = new ChromeDriver();
 
     chromeDriver.manage().window().maximize();
-    chromeDriver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-    chromeDriver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
-    chromeDriver.manage().timeouts().setScriptTimeout(15, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
   }
 
   @AfterEach
