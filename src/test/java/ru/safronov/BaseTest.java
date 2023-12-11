@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import ru.safronov.helpers.ReferenceRefresher;
 
 public class BaseTest {
 
@@ -22,6 +23,7 @@ public class BaseTest {
     chromeDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     chromeDriver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
     chromeDriver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
+    ReferenceRefresher.setDriver(chromeDriver);
   }
 
   @AfterEach

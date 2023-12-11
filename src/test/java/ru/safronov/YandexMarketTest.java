@@ -14,7 +14,8 @@ public class YandexMarketTest extends BaseTest {
   @DisplayName("Проверка наличия товара - проверки в степах")
   @ParameterizedTest(name = "{displayName}: {arguments}")
   @MethodSource("ru.safronov.helpers.DataProvider#providerCheckingProduct")
-  public void testFindProduct(String url, String laptopTitle, String filterPriceFrom, String filterPriceTo,
+  public void testFindProduct(String url, String laptopTitle, String filterPriceFrom,
+      String filterPriceTo,
       String hpCompany, String lenovoCompany, int productsCount) {
     openSite(url, chromeDriver);
     clickButtonCatalog();
@@ -26,6 +27,9 @@ public class YandexMarketTest extends BaseTest {
     waitPageLoad(chromeDriver);
     checkProductCount(productsCount);
     checkProductList(filterPriceFrom, filterPriceTo, hpCompany, lenovoCompany);
-    System.out.println();
+    String firstProductOnPage = saveFirstProduct();
+    enterFirstProductTittle(chromeDriver, firstProductOnPage);
+    clickButtonSubmit(chromeDriver);
+    checkProductExistsOnPage(firstProductOnPage);
   }
 }

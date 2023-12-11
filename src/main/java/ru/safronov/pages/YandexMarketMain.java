@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class YandexMarketMain {
 
   private static final String CATALOG_BUTTON_XPATH = "//div[@data-zone-name='catalog']";
-  private static final String SEARCH_FIELD_XPATH = "//input[@type='text' and @placeholder='Искать товары']";
+  private static final String SEARCH_FIELD_XPATH = "//input[@type='text' and @name='text']";
   private static final String SUBMIT_BUTTON_XPATH = "//button[@type='submit']";
 
   protected WebDriver driver;
@@ -34,5 +34,13 @@ public class YandexMarketMain {
 
   public WebElement getButtonCatalog() {
     return buttonCatalog;
+  }
+
+  public WebElement getSearchField() {
+    return searchField;
+  }
+
+  public WebElement getButtonSubmit() {
+    return buttonSubmit;
   }
 }
