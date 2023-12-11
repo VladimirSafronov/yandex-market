@@ -6,7 +6,9 @@ import java.util.List;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ru.safronov.helpers.Assertions;
+import ru.safronov.helpers.ReferenceRefresher;
 import ru.safronov.pages.YandexMarketLaptopAfterSearch;
+import ru.safronov.pages.YandexMarketMain;
 
 public class YandexMarketLaptopAfterSearchSteps {
 
@@ -23,10 +25,6 @@ public class YandexMarketLaptopAfterSearchSteps {
   @Step("Проверяем минимальное количество товаров на первой странице")
   public static void checkProductCount(int count) {
     page.loadLaptops();
-//    WebElement element = page.getLaptops().get(0);
-//    String elementInfo = element.getText();
-//    int priceIndexTo = elementInfo.lastIndexOf(REGEX_PRICE_TO);
-//    System.out.println(elementInfo.substring(priceIndexTo - 9, priceIndexTo));
     Assertions.assertTrue(page.getLaptops().size() > count,
         "Количество товаров на первой странице равно или менее " + count);
   }
@@ -44,11 +42,22 @@ public class YandexMarketLaptopAfterSearchSteps {
   @Step("Открываем полный список наименований продукта")
   private static void moveToEndSearch() {
     while (page.isShowMoreButtonExists()) {
-      page.initShowMoreButton();
-      WebElement button = page.getShowMoreButton();
-      button.click();
+//      page.initShowMoreButton();
+      if(!ReferenceRefresher.retryClickToElement(YandexMarketLaptopAfterSearch.SHOW_MORE_BUTTON_XPATH)) {
+        break;
+      }
     }
     page.loadLaptops();
+  }
+
+  @Step("Возвращаемся на первую страницу с продуктами")
+  private static void moveToFirstPage() {
+    while (page.isPrevPageButtonExists()) {
+//      page.initPrevPageButton();
+      if(!ReferenceRefresher.retryClickToElement(YandexMarketLaptopAfterSearch.PREV_PAGE_BUTTON_XPATH)) {
+        break;
+      }
+    }
   }
 
   @Step("Проверяем полный список ноутбуков")
@@ -61,8 +70,41 @@ public class YandexMarketLaptopAfterSearchSteps {
   }
 
   @Step("Сохранить первое наименование продукта")
-    public static void saveFirstProduct() {
+  public static String saveFirstProduct() {
+    moveToFirstPage();
+    return page.getFirstProductTitle();
+  }
 
+  @Step("Вводим в поисковую строку запомненное значение")
+  public static void enterFirstProductTittle(WebDriver driver, String productTitle) {
+    YandexMarketMain yandexMarketMain = new YandexMarketMain(driver);
+    WebElement searchField = yandexMarketMain.getSearchField();
+    searchField.click();
+    searchField.clear();
+    System.out.println(productTitle);
+    searchField.sendKeys(productTitle);
+  }
+
+  @Step("Нажимаем на кнопку Найти")
+  public static void clickButtonSubmit(WebDriver driver) {
+    YandexMarketMain yandexMarketMain = new YandexMarketMain(driver);
+    yandexMarketMain.getButtonSubmit().click();
+  }
+
+  @Step("Проверяем, что в результатах поиска, на первой странице, есть искомый товар")
+  public static void checkProductExistsOnPage(String productTitle) {
+    page.loadLaptops();
+    Assertions.assertTrue(isProductExists(page.getLaptops(), productTitle),
+        "На первой странице не содержится искомого товара");
+  }
+
+  private static boolean isProductExists(List<WebElement> products, String productTitle) {
+    for (WebElement product : products) {
+      if (product.getText().contains(productTitle)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean isProductsCorrespond(List<WebElement> products, String filterPriceFrom,

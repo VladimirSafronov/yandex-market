@@ -1,62 +1,56 @@
 package ru.safronov.pages;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.safronov.helpers.Assertions;
+import ru.safronov.helpers.ReferenceRefresher;
 
 public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
 
   private static final String LAPTOP_XPATH = "//div[@data-known-size='249']";
-  private static final String SHOW_MORE_BUTTON_XPATH = "//span[text()=\"Показать ещё\"]";
+  public static final String SHOW_MORE_BUTTON_XPATH = "//span[text()=\"Показать ещё\"]";
   private static final String SEARCH_PAGER_XPATH = "//div[@data-zone-name='SearchPager']";
-  public final Wait<WebDriver> wait;
+  public static final String PREV_PAGE_BUTTON_XPATH = "//div[@data-auto='pagination-prev']";
+  private static final String PRODUCT_TITLE_XPATH = "//h3[@data-auto='snippet-title-header']";
   private List<WebElement> laptops;
   private WebElement showMoreButton;
-  private WebElement searchPager;
+  private WebElement prevPageButton;
 
   public YandexMarketLaptopAfterSearch(WebDriver driver) {
     super(driver);
-
-    List<Class<? extends WebDriverException>> exceptions = List.of(
-        NoSuchElementException.class, StaleElementReferenceException.class, TimeoutException.class
-    );
-    this.wait = new FluentWait<>(driver)
-        .withTimeout(Duration.ofSeconds(5L))
-        .pollingEvery(Duration.ofMillis(500L))
-        .ignoreAll(exceptions);
-
     this.laptops = new ArrayList<>();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-        SEARCH_PAGER_XPATH)));
-    this.searchPager = driver.findElement(By.xpath(SEARCH_PAGER_XPATH));
   }
-
-  public void initShowMoreButton() {
-    if (isShowMoreButtonExists()) {
-      this.showMoreButton = driver.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
-    }
-  }
+//
+//  public void initShowMoreButton() {
+//    if (isShowMoreButtonExists()) {
+//      wait.until(d -> {
+//        d.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
+//        return true;
+//      });
+//      this.showMoreButton = driver.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
+//    }
+//  }
+//
+//  public void initPrevPageButton() {
+//    if (isPrevPageButtonExists()) {
+//      wait.until(d -> {
+//        d.findElement(By.xpath(PREV_PAGE_BUTTON_XPATH));
+//        return true;
+//      });
+//      this.prevPageButton = driver.findElement(By.xpath(PREV_PAGE_BUTTON_XPATH));
+//    }
+//  }
 
   public void loadLaptops() {
-    searchField.click();
-    buttonSubmit.click();
-
-    new Actions(driver)
-        .moveToElement(searchPager, 0, 0)
-        .perform();
+    //TODO: устранить периодическую проблему с загрузкой ноутбуков на первой странице
+    if(!ReferenceRefresher.retryMoveToElement(SEARCH_PAGER_XPATH)) {
+      Assertions.fail("Не получилось прокрутить экран до ссылок на страницы");
+    }
 
     laptops.clear();
     laptops.addAll(driver.findElements(By.xpath(LAPTOP_XPATH)));
@@ -64,13 +58,11 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
   }
 
   public boolean isShowMoreButtonExists() {
-    //TODO: придумать как избавиться от Thread.sleep()
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
     return driver.findElements(By.xpath(SHOW_MORE_BUTTON_XPATH)).size() > 0;
+  }
+
+  public boolean isPrevPageButtonExists() {
+    return driver.findElements(By.xpath(PREV_PAGE_BUTTON_XPATH)).size() > 0;
   }
 
   public void loadPage() {
@@ -79,11 +71,11 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
             .equals("complete"));
   }
 
-  public List<WebElement> getLaptops() {
-    return laptops;
+  public String getFirstProductTitle() {
+    return driver.findElement(By.xpath(PRODUCT_TITLE_XPATH)).getText();
   }
 
-  public WebElement getShowMoreButton() {
-    return showMoreButton;
+  public List<WebElement> getLaptops() {
+    return laptops;
   }
 }

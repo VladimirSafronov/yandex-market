@@ -14,14 +14,12 @@ import ru.safronov.pages.YandexMarketMain;
  */
 public class YandexMarketSetFilterSteps {
 
-//  private static WebDriverWait wait;
   private static WebDriver driver;
 
   @Step("Переходим на сайт: {url}")
   public static void openSite(String url, WebDriver currentDriver) {
     driver = currentDriver;
     driver.get(url);
-//    wait = new WebDriverWait(driver, 30);
   }
 
   @Step("Переходим в Каталог")
