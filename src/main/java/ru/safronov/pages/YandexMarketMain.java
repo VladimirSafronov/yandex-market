@@ -9,9 +9,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class YandexMarketMain {
 
-  private static final String CATALOG_BUTTON_XPATH = "//div[@data-zone-name='catalog']";
-  private static final String SEARCH_FIELD_XPATH = "//input[@type='text' and @name='text']";
-  private static final String SUBMIT_BUTTON_XPATH = "//button[@type='submit']";
+  protected static final String CATALOG_BUTTON_XPATH = "//div[@data-zone-name='catalog']";
+  public static final String SEARCH_FIELD_XPATH = "//input[@type='text' and @name='text']";
+  protected static final String SUBMIT_BUTTON_XPATH = "//button[@type='submit']";
 
   protected WebDriver driver;
   protected WebDriverWait wait;

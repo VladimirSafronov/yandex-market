@@ -15,8 +15,9 @@ public class YandexMarketTest extends BaseTest {
   @ParameterizedTest(name = "{displayName}: {arguments}")
   @MethodSource("ru.safronov.helpers.DataProvider#providerCheckingProduct")
   public void testFindProduct(String url, String laptopTitle, String filterPriceFrom,
-      String filterPriceTo,
-      String hpCompany, String lenovoCompany, int productsCount) {
+      String filterPriceTo, String hpCompany, String lenovoCompany, int productsCount,
+      String... companies) {
+
     openSite(url, chromeDriver);
     clickButtonCatalog();
     moveToLaptopAndComputers();
@@ -26,7 +27,7 @@ public class YandexMarketTest extends BaseTest {
     chooseProduct(hpCompany, lenovoCompany);
     waitPageLoad(chromeDriver);
     checkProductCount(productsCount);
-    checkProductList(filterPriceFrom, filterPriceTo, hpCompany, lenovoCompany);
+    checkProductList(filterPriceFrom, filterPriceTo, companies);
     String firstProductOnPage = saveFirstProduct();
     enterFirstProductTittle(chromeDriver, firstProductOnPage);
     clickButtonSubmit(chromeDriver);

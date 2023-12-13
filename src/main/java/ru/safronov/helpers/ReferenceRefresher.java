@@ -1,5 +1,7 @@
 package ru.safronov.helpers;
 
+import static ru.safronov.pages.YandexMarketMain.SEARCH_FIELD_XPATH;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -16,11 +18,12 @@ public class ReferenceRefresher {
 
   private static final int RETRY_NUMBER = 5;
 
-  public static boolean retryMoveToElement(String xpath) {
+  public static boolean retryMoveToElement(String downPageXpath) {
     for (int i = 0; i < RETRY_NUMBER; i++) {
       try {
         new Actions(driver)
-            .moveToElement(driver.findElement(By.xpath(xpath)), 0, 0)
+            .moveToElement(driver.findElement(By.xpath(SEARCH_FIELD_XPATH)))
+            .moveToElement(driver.findElement(By.xpath(downPageXpath)))
             .perform();
         return true;
       } catch (StaleElementReferenceException ex) {
@@ -30,20 +33,24 @@ public class ReferenceRefresher {
     return false;
   }
 
-  public static boolean retryClickToElement(String xpath) {
+  public static boolean retryClickToElement(String goalXpath) {
 
     for (int i = 1; i <= RETRY_NUMBER; i++) {
-      //TODO: устранить периодическое зацикливание с кнопкой
       try {
         System.out.println(
-            "In retryClickToElement: attemped to find element " + i + ". Xpath = " + xpath);
+            "In retryClickToElement: attempted to find element " + i + ". Xpath = " + goalXpath);
 
-        driver.findElement(By.xpath(xpath)).click();
+        new Actions(driver)
+            .moveToElement(driver.findElement(By.xpath(SEARCH_FIELD_XPATH)))
+            .moveToElement(driver.findElement(By.xpath(goalXpath)))
+            .perform();
+        driver.findElement(By.xpath(goalXpath)).click();
+
         return true;
       } catch (StaleElementReferenceException ex) {
         System.out.println(ex.getMessage());
       } catch (NoSuchElementException ex) {
-        System.out.println("In retryClickToElement: element not found. Xpath = " + xpath);
+        System.out.println("In retryClickToElement: element not found. Xpath = " + goalXpath);
         return false;
       } catch (RuntimeException ex) {
         System.out.println("In retryClickToElement: error - " + ex.getClass().getName());

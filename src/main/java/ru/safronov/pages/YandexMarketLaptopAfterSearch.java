@@ -18,37 +18,15 @@ public class YandexMarketLaptopAfterSearch extends YandexMarketMain {
   public static final String PREV_PAGE_BUTTON_XPATH = "//div[@data-auto='pagination-prev']";
   private static final String PRODUCT_TITLE_XPATH = "//h3[@data-auto='snippet-title-header']";
   private List<WebElement> laptops;
-  private WebElement showMoreButton;
-  private WebElement prevPageButton;
 
   public YandexMarketLaptopAfterSearch(WebDriver driver) {
     super(driver);
     this.laptops = new ArrayList<>();
   }
-//
-//  public void initShowMoreButton() {
-//    if (isShowMoreButtonExists()) {
-//      wait.until(d -> {
-//        d.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
-//        return true;
-//      });
-//      this.showMoreButton = driver.findElement(By.xpath(SHOW_MORE_BUTTON_XPATH));
-//    }
-//  }
-//
-//  public void initPrevPageButton() {
-//    if (isPrevPageButtonExists()) {
-//      wait.until(d -> {
-//        d.findElement(By.xpath(PREV_PAGE_BUTTON_XPATH));
-//        return true;
-//      });
-//      this.prevPageButton = driver.findElement(By.xpath(PREV_PAGE_BUTTON_XPATH));
-//    }
-//  }
 
   public void loadLaptops() {
-    //TODO: устранить периодическую проблему с загрузкой ноутбуков на первой странице
-    if(!ReferenceRefresher.retryMoveToElement(SEARCH_PAGER_XPATH)) {
+    loadPage();
+    if (!ReferenceRefresher.retryMoveToElement(SEARCH_PAGER_XPATH)) {
       Assertions.fail("Не получилось прокрутить экран до ссылок на страницы");
     }
 

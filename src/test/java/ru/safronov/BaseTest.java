@@ -20,9 +20,9 @@ public class BaseTest {
     chromeDriver = new ChromeDriver();
 
     chromeDriver.manage().window().maximize();
-    chromeDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-    chromeDriver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
-    chromeDriver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+    chromeDriver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
     ReferenceRefresher.setDriver(chromeDriver);
   }
 

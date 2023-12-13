@@ -40,10 +40,11 @@ public class YandexMarketLaptopAfterSearchSteps {
   }
 
   @Step("Открываем полный список наименований продукта")
-  private static void moveToEndSearch() {
+  private static void moveLastPage() {
     while (page.isShowMoreButtonExists()) {
-//      page.initShowMoreButton();
-      if(!ReferenceRefresher.retryClickToElement(YandexMarketLaptopAfterSearch.SHOW_MORE_BUTTON_XPATH)) {
+      page.loadPage();
+      if (!ReferenceRefresher.retryClickToElement(
+          YandexMarketLaptopAfterSearch.SHOW_MORE_BUTTON_XPATH)) {
         break;
       }
     }
@@ -51,10 +52,11 @@ public class YandexMarketLaptopAfterSearchSteps {
   }
 
   @Step("Возвращаемся на первую страницу с продуктами")
-  private static void moveToFirstPage() {
+  private static void moveFirstPage() {
     while (page.isPrevPageButtonExists()) {
-//      page.initPrevPageButton();
-      if(!ReferenceRefresher.retryClickToElement(YandexMarketLaptopAfterSearch.PREV_PAGE_BUTTON_XPATH)) {
+      page.loadPage();
+      if (!ReferenceRefresher.retryClickToElement(
+          YandexMarketLaptopAfterSearch.PREV_PAGE_BUTTON_XPATH)) {
         break;
       }
     }
@@ -63,7 +65,8 @@ public class YandexMarketLaptopAfterSearchSteps {
   @Step("Проверяем полный список ноутбуков")
   public static void checkProductList(String filterPriceFrom, String filterPriceTo,
       String... companies) {
-    moveToEndSearch();
+
+    moveLastPage();
     Assertions.assertTrue(
         isProductsCorrespond(page.getLaptops(), filterPriceFrom, filterPriceTo, companies),
         "Список ноутбуков не соответствует фильтру");
@@ -71,7 +74,7 @@ public class YandexMarketLaptopAfterSearchSteps {
 
   @Step("Сохранить первое наименование продукта")
   public static String saveFirstProduct() {
-    moveToFirstPage();
+    moveFirstPage();
     return page.getFirstProductTitle();
   }
 
@@ -109,19 +112,19 @@ public class YandexMarketLaptopAfterSearchSteps {
 
   private static boolean isProductsCorrespond(List<WebElement> products, String filterPriceFrom,
       String filterPriceTo, String... companies) {
-    int count = 0;
+
     for (WebElement product : products) {
-      count++;
       String productInfo = product.getText();
       String productCompany = getProductCompany(productInfo);
       int productPrice = getProductPrice(productInfo);
-      if (productPrice < Integer.parseInt(filterPriceFrom)
-          || productPrice > Integer.parseInt(filterPriceTo)
-          || !Arrays.asList(companies).contains(productCompany)) {
-        System.out.println(productInfo);
-        System.out.println(productCompany);
-        System.out.println(productPrice);
-        System.out.println(count);
+      if (!Arrays.asList(companies).contains(productCompany)) {
+        Assertions.fail("В список продуктов попал производитель (" + productCompany +
+            ") не из фильтра: " + Arrays.toString(companies));
+        return false;
+      } else if (productPrice < Integer.parseInt(filterPriceFrom)
+          || productPrice > Integer.parseInt(filterPriceTo)) {
+        Assertions.fail("Цена продукта: " + productPrice + " - не соответствует фильтру: "
+            + filterPriceFrom + " - " + filterPriceTo);
         return false;
       }
     }
@@ -129,18 +132,13 @@ public class YandexMarketLaptopAfterSearchSteps {
   }
 
   private static String getProductCompany(String elementInfo) {
-//    System.out.println(elementInfo);
     elementInfo = elementInfo.toLowerCase();
-//    System.out.println("after toLowerCase(): " + elementInfo);
     if (elementInfo.contains("lenovo")) {
-//      System.out.println("-----contains lenovo-----");
       return "Lenovo";
-    } else if (elementInfo.contains("hp")) {
-//      System.out.println("------contains hp-------");
+    } else if (elementInfo.contains("hp") || (elementInfo.contains("нр"))) {
       return "HP";
     } else {
-//      System.out.println("-----other company-----");
-      return "Неизвестный производитель";
+      return "Неизвестный производитель. " + elementInfo;
     }
   }
 
