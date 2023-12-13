@@ -10,7 +10,8 @@ import ru.safronov.pages.YandexMarketLaptops;
 import ru.safronov.pages.YandexMarketMain;
 
 /**
- * Данный класс помогает реализовать тестирование при помощи степов - тесты короче, отчет понятнее
+ * Помогает реализовать тестирование при помощи степов - тесты короче, отчет понятнее. Данный класс
+ * - степы настройки фильтра продуктов
  */
 public class YandexMarketSetFilterSteps {
 

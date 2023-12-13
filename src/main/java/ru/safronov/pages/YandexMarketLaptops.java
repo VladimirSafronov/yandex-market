@@ -6,15 +6,26 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+/**
+ * Класс страницы секции "Ноутбуки" Яндекс Маркет
+ */
 public class YandexMarketLaptops extends YandexMarketMain {
 
+  //Xpath поля фильтра для цены "От"
   private static final String FIELD_FROM_PRICE_XPATH =
       "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'min')]";
+
+  //Xpath поля фильтра для цены "До"
   private static final String FIELD_TO_PRICE_XPATH =
       "//input[starts-with(@id, 'range-filter-field-glprice') and contains(@id, 'max')]";
 
+  //Поле фильтра для цены "От"
   private WebElement fieldFromPrice;
+
+  //Поле фильтра для цены "До"
   private WebElement fieldToPrice;
+
+  //Список выбираемых в фильтре компаний-производителей
   private WebElement[] products;
 
   public YandexMarketLaptops(WebDriver driver) {
