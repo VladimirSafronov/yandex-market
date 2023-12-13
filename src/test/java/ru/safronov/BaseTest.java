@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import ru.safronov.helpers.ReferenceRefresher;
 
+/**
+ * Данный класс настраивает веб-драйвер
+ */
 public class BaseTest {
 
   protected WebDriver chromeDriver;
@@ -14,9 +17,6 @@ public class BaseTest {
   @BeforeEach
   public void before() {
     System.setProperty("webdriver.chrome.driver", System.getenv("CHROME_DRIVER"));
-//    ChromeOptions options = new ChromeOptions();
-//    options.addArguments(CapabilityType.PAGE_LOAD_STRATEGY, "none");
-//    chromeDriver = new ChromeDriver(options);
     chromeDriver = new ChromeDriver();
 
     chromeDriver.manage().window().maximize();

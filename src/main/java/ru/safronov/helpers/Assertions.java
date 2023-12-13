@@ -1,5 +1,9 @@
 package ru.safronov.helpers;
 
+/**
+ * Данный класс переопределяет классический Assertions чтобы assert отображался в allure всегда (не
+ * только, когда тест упадет)
+ */
 public class Assertions {
 
   public static void assertTrue(boolean condition, String message) {

@@ -10,9 +10,19 @@ import ru.safronov.helpers.ReferenceRefresher;
 import ru.safronov.pages.YandexMarketLaptopAfterSearch;
 import ru.safronov.pages.YandexMarketMain;
 
+/**
+ * Помогает реализовать тестирование при помощи степов - тесты короче, отчет понятнее.Данный класс -
+ * степы работы с отфильтровнным продуктом
+ */
 public class YandexMarketLaptopAfterSearchSteps {
 
+  /*
+  Переменная используется для нахождения цены продукта из текста всего WebElement-а (цена может быть
+  до миллиона)
+   */
   private static final int PRICE_MAX_LENGTH = 8;
+
+  //Символ рубля
   private static final char REGEX_PRICE_TO = '₽';
   private static YandexMarketLaptopAfterSearch page;
 
@@ -27,16 +37,6 @@ public class YandexMarketLaptopAfterSearchSteps {
     page.loadLaptops();
     Assertions.assertTrue(page.getLaptops().size() > count,
         "Количество товаров на первой странице равно или менее " + count);
-  }
-
-  private static String deleteAllSpaces(String str) {
-    StringBuilder newStr = new StringBuilder();
-    for (int i = 0; i < str.length(); i++) {
-      if (Character.isDigit(str.charAt(i))) {
-        newStr.append(str.charAt(i));
-      }
-    }
-    return newStr.toString();
   }
 
   @Step("Открываем полный список наименований продукта")
@@ -101,6 +101,12 @@ public class YandexMarketLaptopAfterSearchSteps {
         "На первой странице не содержится искомого товара");
   }
 
+  /**
+   * Метод проверяет имеется ли продукт во всем списке продуктов
+   *
+   * @param products     - список продуктов
+   * @param productTitle - заголовкок продукта
+   */
   private static boolean isProductExists(List<WebElement> products, String productTitle) {
     for (WebElement product : products) {
       if (product.getText().contains(productTitle)) {
@@ -110,6 +116,14 @@ public class YandexMarketLaptopAfterSearchSteps {
     return false;
   }
 
+  /**
+   * Метод проверяет соответствует ли список продуктов фильтру
+   *
+   * @param products        - список продуктов
+   * @param filterPriceFrom - цена от
+   * @param filterPriceTo   - цена до
+   * @param companies       - выбранные компании
+   */
   private static boolean isProductsCorrespond(List<WebElement> products, String filterPriceFrom,
       String filterPriceTo, String... companies) {
 
@@ -131,6 +145,12 @@ public class YandexMarketLaptopAfterSearchSteps {
     return true;
   }
 
+  /**
+   * Метод находит название компании в тексте WebElement-а
+   *
+   * @param elementInfo - текст WebElement-а
+   * @return - название искомой компании (либо иной производитель)
+   */
   private static String getProductCompany(String elementInfo) {
     elementInfo = elementInfo.toLowerCase();
     if (elementInfo.contains("lenovo")) {
@@ -138,10 +158,32 @@ public class YandexMarketLaptopAfterSearchSteps {
     } else if (elementInfo.contains("hp") || (elementInfo.contains("нр"))) {
       return "HP";
     } else {
-      return "Неизвестный производитель. " + elementInfo;
+      return "Иной производитель. " + elementInfo;
     }
   }
 
+  /**
+   * Метод удаления нечисловых символов (в том числе убирает нестандартный пробел - &thinsp;)
+   *
+   * @param str Текстовые данные, содержащие цену
+   * @return строка, содержащая числовые символы
+   */
+  private static String deleteAllSpaces(String str) {
+    StringBuilder newStr = new StringBuilder();
+    for (int i = 0; i < str.length(); i++) {
+      if (Character.isDigit(str.charAt(i))) {
+        newStr.append(str.charAt(i));
+      }
+    }
+    return newStr.toString();
+  }
+
+  /**
+   * Метод находит цену товара в тексте WebElement-а
+   *
+   * @param elementInfo - текст WebElement-а
+   * @return - цена товара
+   */
   private static int getProductPrice(String elementInfo) {
     int priceIndexTo = elementInfo.lastIndexOf(REGEX_PRICE_TO);
     String price = deleteAllSpaces(
